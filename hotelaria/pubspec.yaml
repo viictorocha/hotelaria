@@ -5,7 +5,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  # Aumentamos para 3.27 para suportar as novas APIs de Color (withValues)
+
   sdk: '>=3.11.0 <4.0.0'
 
 dependencies:
@@ -14,19 +14,28 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   
-  # Gerenciador de dependências (Service Locator)
+
   get_it: ^8.0.3
 
 dev_dependencies:
+
+  flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
 
-  # Atualizado para as lints mais recentes
+
   flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true
 
-  # Se você for usar imagens locais futuramente, a seção abaixo deve existir:
-  # assets:
-  #   - assets/images/
+  assets:
+    - assets/images/
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo.png"
+  remove_alpha_ios: true
+  adaptive_icon_background: "#0F172A"
+  adaptive_icon_foreground: "assets/images/logo.png"
