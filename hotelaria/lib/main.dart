@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hotelaria/service_locator.dart';
 import 'presentation/pages/home_menu_screen.dart';
 
 void main() {
+  setupLocator();
   runApp(const HotelariaApp());
 }
 
