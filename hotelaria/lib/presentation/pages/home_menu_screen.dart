@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotelaria/presentation/pages/consumo_screen.dart';
 import 'package:hotelaria/presentation/pages/mapa_quartos_screen.dart';
 
 class HomeMenuScreen extends StatelessWidget {
@@ -110,7 +111,14 @@ class HomeMenuScreen extends StatelessWidget {
                       icon: Icons.room_service_rounded,
                       label: 'Consumo',
                       color: accentColor,
-                      onTap: () => print('Ir para Consumo'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ConsumoScreen(),
+                          ),
+                        );
+                      },
                     ),
                     _buildMenuItem(
                       context,
