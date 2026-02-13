@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hotelaria/presentation/pages/configuracoes_screen.dart';
 import 'package:hotelaria/presentation/pages/consumo_screen.dart';
+import 'package:hotelaria/presentation/pages/dashboard_screen.dart';
+import 'package:hotelaria/presentation/pages/financeiro_screen.dart';
 import 'package:hotelaria/presentation/pages/mapa_quartos_screen.dart';
+import 'package:hotelaria/presentation/pages/reservas_lista_screen.dart';
 
 class HomeMenuScreen extends StatelessWidget {
   const HomeMenuScreen({super.key});
@@ -83,7 +87,14 @@ class HomeMenuScreen extends StatelessWidget {
                       icon: Icons.dashboard_rounded,
                       label: 'Dashboard',
                       color: accentColor,
-                      onTap: () => print('Ir para Dashboard'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const DashboardScreen(),
+                          ),
+                        );
+                      },
                     ),
                     _buildMenuItem(
                       context,
@@ -104,7 +115,14 @@ class HomeMenuScreen extends StatelessWidget {
                       icon: Icons.calendar_month_rounded,
                       label: 'Reservas',
                       color: accentColor,
-                      onTap: () => print('Ir para Reservas'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ReservasListaScreen(),
+                          ),
+                        );
+                      },
                     ),
                     _buildMenuItem(
                       context,
@@ -125,16 +143,25 @@ class HomeMenuScreen extends StatelessWidget {
                       icon: Icons.attach_money_rounded,
                       label: 'Financeiro',
                       color: accentColor,
-                      onTap: () => print('Ir para Financeiro'),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const FinanceiroScreen(),
+                        ),
+                      ),
                     ),
                     _buildMenuItem(
                       context,
                       icon: Icons.settings_rounded,
                       label: 'Configurações',
-                      color:
-                          Colors.grey, // Diferente para indicar configurações
+                      color: Colors.grey,
                       isSecondary: true,
-                      onTap: () => print('Ir para Config'),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ConfiguracoesScreen(),
+                        ),
+                      ),
                     ),
                   ],
                 ),
