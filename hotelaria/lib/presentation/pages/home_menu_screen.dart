@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotelaria/presentation/pages/mapa_quartos_screen.dart';
 
 class HomeMenuScreen extends StatelessWidget {
   const HomeMenuScreen({super.key});
@@ -88,7 +89,14 @@ class HomeMenuScreen extends StatelessWidget {
                       icon: Icons.meeting_room_rounded,
                       label: 'Mapa de Quartos',
                       color: accentColor,
-                      onTap: () => print('Ir para Mapa'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MapaQuartosScreen(),
+                          ),
+                        );
+                      },
                     ),
                     _buildMenuItem(
                       context,
