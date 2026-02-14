@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotelaria/domain/entities/perfil.dart';
+import 'package:Hotelaria/domain/entities/perfil_entity.dart';
 import '../../services/perfil_service.dart';
 import '../../domain/entities/funcionalidade_entity.dart';
 

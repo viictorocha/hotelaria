@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotelaria/presentation/pages/quarto_detalhe_screen.dart';
+import 'package:Hotelaria/presentation/pages/quarto_detalhe_screen.dart';
 import '../../domain/entities/quarto_entity.dart';
 import '../../data/repositories/quarto_mock_repository.dart';
 

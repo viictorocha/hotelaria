@@ -1,4 +1,4 @@
-import 'package:hotelaria/domain/entities/funcionalidade_entity.dart';
+import 'package:Hotelaria/domain/entities/funcionalidade_entity.dart';
 
 class PerfilEntity {
   final int id;

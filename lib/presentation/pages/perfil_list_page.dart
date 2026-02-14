@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hotelaria/presentation/pages/perfil_create_page.dart';
-import '../../domain/entities/perfil.dart';
+import 'package:Hotelaria/presentation/pages/perfil_create_page.dart';
+import '../../domain/entities/perfil_entity.dart';
 import '../../services/perfil_service.dart';
 import 'perfil_edit_page.dart';
 

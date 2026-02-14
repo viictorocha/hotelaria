@@ -1,10 +1,10 @@
+import 'package:Hotelaria/presentation/pages/configuracoes_screen.dart';
+import 'package:Hotelaria/presentation/pages/financeiro_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:hotelaria/presentation/pages/configuracoes_screen.dart';
-import 'package:hotelaria/presentation/pages/consumo_screen.dart';
-import 'package:hotelaria/presentation/pages/dashboard_screen.dart';
-import 'package:hotelaria/presentation/pages/financeiro_screen.dart';
-import 'package:hotelaria/presentation/pages/mapa_quartos_screen.dart';
-import 'package:hotelaria/presentation/pages/reservas_lista_screen.dart';
+import 'package:Hotelaria/presentation/pages/consumo_screen.dart';
+import 'package:Hotelaria/presentation/pages/dashboard_screen.dart';
+import 'package:Hotelaria/presentation/pages/mapa_quartos_screen.dart';
+import 'package:Hotelaria/presentation/pages/reservas_lista_screen.dart';
 
 class HomeMenuScreen extends StatelessWidget {
   const HomeMenuScreen({super.key});

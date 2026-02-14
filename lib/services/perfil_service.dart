@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:hotelaria/domain/entities/funcionalidade_entity.dart';
+import 'package:Hotelaria/domain/entities/funcionalidade_entity.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../domain/entities/perfil.dart';
+import '../domain/entities/perfil_entity.dart';
 
 class PerfilService {
   // Altere para a URL da sua API na Render
@@ -87,7 +87,6 @@ class PerfilService {
         }),
       );
 
-      // 204 NoContent ou 200 OK indicam sucesso no C#
       return response.statusCode == 204 || response.statusCode == 200;
     } catch (e) {
       print("Erro ao atualizar perfil: $e");

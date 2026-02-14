@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:hotelaria/domain/entities/quarto_entity.dart';
+import 'package:Hotelaria/domain/entities/quarto_entity.dart';
 import 'package:http/http.dart' as http;
 
 class QuartoService {
