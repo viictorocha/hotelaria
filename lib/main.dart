@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hotelaria/presentation/pages/login_page.dart';
+import 'package:hotelaria/presentation/pages/perfil_list_page.dart';
 import 'package:hotelaria/service_locator.dart';
 import 'presentation/pages/home_menu_screen.dart';
 
@@ -18,15 +20,27 @@ class HotelariaApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        // Paleta de Cores: Azul Escuro e Azul Claro
-        scaffoldBackgroundColor: const Color(
-          0xFF0F172A,
-        ), // Fundo quase preto (Navy)
-        primaryColor: const Color(0xFF38BDF8), // Azul Claro (Cyan/Sky)
-        cardColor: const Color(0xFF1E293B), // Azul Petróleo para os cards
-        fontFamily: 'Roboto', // Pode trocar por Poppins ou Inter depois
+        scaffoldBackgroundColor: const Color(0xFF0F172A),
+        primaryColor: const Color(0xFF38BDF8),
+        cardColor: const Color(0xFF1E293B),
+        fontFamily: 'Roboto',
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: const Color(0xFF1E293B),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          labelStyle: const TextStyle(color: Color(0xFF38BDF8)),
+        ),
       ),
-      home: const HomeMenuScreen(),
+
+      // Definimos a página de login como inicial
+      initialRoute: '/login',
+
+      // Tabela de Rotas
+      routes: {
+        '/login': (context) => const LoginPage(),
+        '/home': (context) => const HomeMenuScreen(),
+        '/perfis': (context) => const PerfilListPage(),
+      },
     );
   }
 }

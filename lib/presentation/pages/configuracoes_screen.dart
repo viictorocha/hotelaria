@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'perfil_list_page.dart';
 
 class ConfiguracoesScreen extends StatelessWidget {
   const ConfiguracoesScreen({super.key});
@@ -22,34 +23,51 @@ class ConfiguracoesScreen extends StatelessWidget {
               Icons.hotel_outlined,
               'Dados da Pousada',
               'Nome, CNPJ, Endereço',
+              () {}, // Por enquanto vazio
             ),
             _buildSettingsTile(
               Icons.bed_outlined,
               'Gerenciar Quartos',
               'Adicionar ou remover unidades',
+              () {}, // Por enquanto vazio
             ),
           ]),
           const SizedBox(height: 32),
           _buildSettingsGroup('Sistema', [
+            // --- NOVO ITEM: GESTÃO DE ACESSO ---
+            _buildSettingsTile(
+              Icons.security_outlined,
+              'Níveis de Acesso',
+              'Gerenciar Perfis e Permissões',
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PerfilListPage(),
+                  ),
+                );
+              },
+            ),
+            // ----------------------------------
             _buildSettingsTile(
               Icons.person_outline,
               'Perfil do Gestor',
               'Senha e e-mail',
+              () {},
             ),
             _buildSettingsTile(
               Icons.notifications_none_rounded,
               'Notificações',
               'Alertas de check-in e consumo',
-            ),
-            _buildSettingsTile(
-              Icons.dark_mode_outlined,
-              'Aparência',
-              'Tema escuro habilitado',
+              () {},
             ),
           ]),
           const SizedBox(height: 32),
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              // Aqui você pode limpar o SharedPreferences e deslogar
+              Navigator.pushReplacementNamed(context, '/login');
+            },
             child: const Text(
               'Sair da Conta',
               style: TextStyle(
@@ -88,9 +106,17 @@ class ConfiguracoesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingsTile(IconData icon, String title, String subtitle) {
+  Widget _buildSettingsTile(
+    IconData icon,
+    String title,
+    String subtitle,
+    VoidCallback onTap,
+  ) {
     return ListTile(
-      leading: Icon(icon, color: Colors.blue),
+      leading: Icon(
+        icon,
+        color: const Color(0xFF38BDF8),
+      ), // Usando o azul do seu tema
       title: Text(
         title,
         style: const TextStyle(color: Colors.white, fontSize: 15),
@@ -100,7 +126,7 @@ class ConfiguracoesScreen extends StatelessWidget {
         style: const TextStyle(color: Colors.white38, fontSize: 12),
       ),
       trailing: const Icon(Icons.chevron_right, color: Colors.white24),
-      onTap: () {},
+      onTap: onTap,
     );
   }
 }
