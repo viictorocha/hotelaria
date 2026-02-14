@@ -1,3 +1,4 @@
+import 'package:Hotelaria/presentation/pages/UsuarioListPage.dart';
 import 'package:flutter/material.dart';
 import 'perfil_list_page.dart';
 
@@ -34,7 +35,22 @@ class ConfiguracoesScreen extends StatelessWidget {
           ]),
           const SizedBox(height: 32),
           _buildSettingsGroup('Sistema', [
-            // --- NOVO ITEM: GESTÃO DE ACESSO ---
+            // --- ITEM: GESTÃO DE USUÁRIOS ---
+            _buildSettingsTile(
+              Icons.people_alt_outlined, // Ícone que representa equipe
+              'Equipe e Usuários',
+              'Gerenciar funcionários e acessos',
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const UsuarioListPage(),
+                  ),
+                );
+              },
+            ),
+
+            // ----------------------------------
             _buildSettingsTile(
               Icons.security_outlined,
               'Níveis de Acesso',
@@ -48,13 +64,14 @@ class ConfiguracoesScreen extends StatelessWidget {
                 );
               },
             ),
-            // ----------------------------------
+
             _buildSettingsTile(
               Icons.person_outline,
               'Perfil do Gestor',
               'Senha e e-mail',
               () {},
             ),
+
             _buildSettingsTile(
               Icons.notifications_none_rounded,
               'Notificações',

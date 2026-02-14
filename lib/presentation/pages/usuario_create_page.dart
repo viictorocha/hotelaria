@@ -56,7 +56,7 @@ class _UsuarioCreatePageState extends State<UsuarioCreatePage> {
       id: 0,
       nome: _nomeController.text.trim(),
       email: _emailController.text.trim(),
-      senha: _senhaController.text.trim(), // Enviando a senha para o backend
+      senha: _senhaController.text.trim(),
       perfilId: _perfilSelecionadoId!,
     );
 

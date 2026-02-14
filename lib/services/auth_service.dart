@@ -3,8 +3,7 @@ import 'package:Hotelaria/domain/entities/login_response.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  // final String baseUrl = "https://hotelariaapi.onrender.com";
-  final String baseUrl = "http://127.0.0.1:5299/";
+  final String baseUrl = "https://hotelariaapi.onrender.com";
 
   Future<LoginResponse?> login(String email, String password) async {
     final response = await http.post(
