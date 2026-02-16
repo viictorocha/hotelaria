@@ -1,13 +1,15 @@
+import 'package:Hotelaria/domain/entities/usuario_entity.dart';
+
 class LoginResponse {
   final String token;
-  final UserData user;
+  final UsuarioEntity user; // Use UsuarioEntity aqui
 
   LoginResponse({required this.token, required this.user});
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
     return LoginResponse(
       token: json['token'],
-      user: UserData.fromJson(json['user']),
+      user: UsuarioEntity.fromJson(json['user']),
     );
   }
 }

@@ -35,7 +35,7 @@ class UsuarioEntity {
       'nome': nome,
       'email': email,
       'senha': senha,
-      'perfilId': perfilId,
+      'perfil': perfil?.toJson(),
     };
   }
 }

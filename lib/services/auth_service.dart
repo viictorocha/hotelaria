@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:Hotelaria/domain/entities/login_response.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../domain/entities/usuario_entity.dart'; // Ajuste o path se necessário
 
 class AuthService {
   final String baseUrl = "https://hotelariaapi.onrender.com";
+  static const String _userKey = "user_data";
 
   Future<LoginResponse?> login(String email, String password) async {
     final response = await http.post(
@@ -13,9 +16,40 @@ class AuthService {
     );
 
     if (response.statusCode == 200) {
-      return LoginResponse.fromJson(jsonDecode(response.body));
+      final loginData = LoginResponse.fromJson(jsonDecode(response.body));
+
+      // SALVAR: Armazena o usuário localmente após o login com sucesso
+      await _salvarUsuarioLocal(loginData.user);
+
+      return loginData;
     } else {
-      return null; // Aqui você pode tratar erros (401, 500, etc)
+      return null;
     }
+  }
+
+  // --- MÉTODOS DE PERSISTÊNCIA ---
+
+  Future<void> _salvarUsuarioLocal(UsuarioEntity user) async {
+    final prefs = await SharedPreferences.getInstance();
+    // Transformamos o objeto em String JSON para salvar
+    String userJson = jsonEncode(user.toJson());
+    await prefs.setString(_userKey, userJson);
+  }
+
+  /// Recupera o usuário logado do disco
+  static Future<UsuarioEntity?> getUsuarioLogado() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userJson = prefs.getString(_userKey);
+
+    if (userJson != null) {
+      return UsuarioEntity.fromJson(jsonDecode(userJson));
+    }
+    return null;
+  }
+
+  /// Limpa os dados (Logout)
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_userKey);
   }
 }

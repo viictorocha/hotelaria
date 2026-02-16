@@ -1,18 +1,62 @@
+import 'package:Hotelaria/domain/entities/usuario_entity.dart';
 import 'package:Hotelaria/presentation/pages/configuracoes_screen.dart';
 import 'package:Hotelaria/presentation/pages/financeiro_screen.dart';
+import 'package:Hotelaria/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:Hotelaria/presentation/pages/consumo_screen.dart';
 import 'package:Hotelaria/presentation/pages/dashboard_screen.dart';
 import 'package:Hotelaria/presentation/pages/mapa_quartos_screen.dart';
 import 'package:Hotelaria/presentation/pages/reservas_lista_screen.dart';
 
-class HomeMenuScreen extends StatelessWidget {
+class HomeMenuScreen extends StatefulWidget {
   const HomeMenuScreen({super.key});
+
+  @override
+  State<HomeMenuScreen> createState() => _HomeMenuScreenState();
+}
+
+class _HomeMenuScreenState extends State<HomeMenuScreen> {
+  UsuarioEntity? _usuario;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarDadosUsuario();
+  }
+
+  Future<void> _carregarDadosUsuario() async {
+    final user = await AuthService.getUsuarioLogado();
+
+    setState(() {
+      _usuario =
+          user; // Agora sua tela tem os dados para o _temAcesso() funcionar!
+      _isLoading = false;
+    });
+  }
+
+  /// Verifica se o usuário tem permissão para acessar a funcionalidade
+  bool _temAcesso(String funcionalidade) {
+    if (_usuario == null) return false;
+
+    // Admin (PerfilId 1) sempre tem acesso a tudo
+    if (_usuario!.perfilId == 1) return true;
+
+    // Verifica na lista de funcionalidades do perfil
+    return _usuario!.perfil?.funcionalidades?.any(
+          (f) => f.nome.toLowerCase() == funcionalidade.toLowerCase(),
+        ) ??
+        false;
+  }
 
   @override
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final accentColor = Theme.of(context).primaryColor;
+
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -22,6 +66,7 @@ class HomeMenuScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // --- Cabeçalho Dinâmico ---
               // --- Cabeçalho ---
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -29,9 +74,12 @@ class HomeMenuScreen extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Bom dia, Gestor',
-                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                      Text(
+                        'Bom dia, ${_usuario?.nome.split(' ')[0] ?? 'Gestor'}',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       const Text(
@@ -44,18 +92,65 @@ class HomeMenuScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // Avatar simples
-                  Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: accentColor, width: 2),
+
+                  // --- Avatar com Menu de Sair ---
+                  PopupMenuButton<int>(
+                    offset: const Offset(
+                      0,
+                      50,
+                    ), // Faz o menu aparecer abaixo do avatar
+                    color: Theme.of(context).cardColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                    child: const CircleAvatar(
-                      radius: 24,
-                      backgroundImage: NetworkImage(
-                        'https://i.pravatar.cc/150?img=12',
-                      ), // Imagem placeholder
+                    onSelected: (value) async {
+                      if (value == 1) {
+                        // 1. Limpa os dados do SharedPreferences usando seu AuthService
+                        final authService = AuthService();
+                        await authService
+                            .logout(); // Certifique-se de que o logout() está implementado
+
+                        // 2. Volta para a tela de login removendo todas as rotas anteriores
+                        if (context.mounted) {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            '/login',
+                            (route) => false,
+                          );
+                        }
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 1,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.logout,
+                              color: Colors.redAccent,
+                              size: 20,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Sair da Conta',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: accentColor, width: 2),
+                      ),
+                      child: const CircleAvatar(
+                        radius: 24,
+                        backgroundImage: NetworkImage(
+                          'https://i.pravatar.cc/150?img=12',
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -74,95 +169,98 @@ class HomeMenuScreen extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              // --- Grid do Menu ---
+              // --- Grid do Menu com Filtro de Permissões ---
               Expanded(
                 child: GridView.count(
-                  crossAxisCount: 2, // 2 colunas
+                  crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  childAspectRatio: 1.1, // Formato levemente retangular
+                  childAspectRatio: 1.1,
                   children: [
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.dashboard_rounded,
-                      label: 'Dashboard',
-                      color: accentColor,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const DashboardScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.meeting_room_rounded,
-                      label: 'Mapa de Quartos',
-                      color: accentColor,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MapaQuartosScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.calendar_month_rounded,
-                      label: 'Reservas',
-                      color: accentColor,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ReservasListaScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.room_service_rounded,
-                      label: 'Consumo',
-                      color: accentColor,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ConsumoScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.attach_money_rounded,
-                      label: 'Financeiro',
-                      color: accentColor,
-                      onTap: () => Navigator.push(
+                    if (_temAcesso('Dashboard'))
+                      _buildMenuItem(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const FinanceiroScreen(),
+                        icon: Icons.dashboard_rounded,
+                        label: 'Dashboard',
+                        color: accentColor,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const DashboardScreen(),
+                          ),
                         ),
                       ),
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.settings_rounded,
-                      label: 'Configurações',
-                      color: Colors.grey,
-                      isSecondary: true,
-                      onTap: () => Navigator.push(
+
+                    if (_temAcesso('Mapa_Quartos'))
+                      _buildMenuItem(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const ConfiguracoesScreen(),
+                        icon: Icons.meeting_room_rounded,
+                        label: 'Mapa de Quartos',
+                        color: accentColor,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MapaQuartosScreen(),
+                          ),
                         ),
                       ),
-                    ),
+
+                    if (_temAcesso('Reservas'))
+                      _buildMenuItem(
+                        context,
+                        icon: Icons.calendar_month_rounded,
+                        label: 'Reservas',
+                        color: accentColor,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ReservasListaScreen(),
+                          ),
+                        ),
+                      ),
+
+                    if (_temAcesso('Consumo'))
+                      _buildMenuItem(
+                        context,
+                        icon: Icons.room_service_rounded,
+                        label: 'Consumo',
+                        color: accentColor,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ConsumoScreen(),
+                          ),
+                        ),
+                      ),
+
+                    if (_temAcesso('Financeiro'))
+                      _buildMenuItem(
+                        context,
+                        icon: Icons.attach_money_rounded,
+                        label: 'Financeiro',
+                        color: accentColor,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const FinanceiroScreen(),
+                          ),
+                        ),
+                      ),
+
+                    if (_temAcesso('Configuracoes'))
+                      _buildMenuItem(
+                        context,
+                        icon: Icons.settings_rounded,
+                        label: 'Configurações',
+                        color: Colors.grey,
+                        isSecondary: true,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ConfiguracoesScreen(),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -187,7 +285,6 @@ class HomeMenuScreen extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(20),
-        // ATUALIZADO: Usando withValues em vez de withOpacity
         splashColor: color.withValues(alpha: 0.1),
         child: Container(
           padding: const EdgeInsets.all(20),
