@@ -1,3 +1,4 @@
+import 'package:Hotelaria/presentation/pages/pousadaPage.dart';
 import 'package:Hotelaria/presentation/pages/UsuarioListPage.dart';
 import 'package:flutter/material.dart';
 import 'perfil_list_page.dart';
@@ -24,7 +25,12 @@ class ConfiguracoesScreen extends StatelessWidget {
               Icons.hotel_outlined,
               'Dados da Pousada',
               'Nome, CNPJ, Endereço',
-              () {}, // Por enquanto vazio
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PousadaPage()),
+                );
+              },
             ),
             _buildSettingsTile(
               Icons.bed_outlined,

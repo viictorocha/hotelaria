@@ -1,4 +1,5 @@
 import 'package:Hotelaria/domain/entities/usuario_entity.dart';
+import 'package:Hotelaria/presentation/pages/UsuarioEditPage.dart';
 import 'package:Hotelaria/presentation/pages/usuario_create_page.dart';
 import 'package:Hotelaria/services/usuario_service.dart';
 import 'package:flutter/material.dart';
@@ -49,13 +50,65 @@ class _UsuarioListPageState extends State<UsuarioListPage> {
             itemCount: usuarios.length,
             itemBuilder: (context, index) {
               final user = usuarios[index];
-              return ListTile(
-                leading: CircleAvatar(child: Text(user.nome[0])),
-                title: Text(user.nome),
-                subtitle: Text(user.email),
-                trailing: Chip(
-                  label: Text(user.perfil?.nome ?? 'Sem Perfil'),
-                  backgroundColor: Colors.blue.shade50,
+
+              // Widget que permite deslizar para excluir
+              return Dismissible(
+                key: Key(user.id.toString()),
+                direction: DismissDirection.endToStart,
+                background: Container(
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.only(right: 20),
+                  color: Colors.red,
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
+                confirmDismiss: (direction) async {
+                  return await showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text("Excluir Usuário?"),
+                      content: Text("Deseja remover ${user.nome}?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx, false),
+                          child: const Text("NÃO"),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx, true),
+                          child: const Text(
+                            "SIM",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                onDismissed: (direction) async {
+                  final ok = await _usuarioService.deletarUsuario(user.id);
+                  if (ok) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("${user.nome} removido")),
+                    );
+                  }
+                  _atualizarLista();
+                },
+                child: ListTile(
+                  leading: CircleAvatar(child: Text(user.nome[0])),
+                  title: Text(user.nome),
+                  subtitle: Text(user.email),
+                  trailing: Chip(
+                    label: Text(user.perfil?.nome ?? 'Sem Perfil'),
+                    backgroundColor: Colors.blue.shade50,
+                  ),
+                  onTap: () async {
+                    final editado = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UsuarioEditPage(usuario: user),
+                      ),
+                    );
+                    if (editado == true) _atualizarLista();
+                  },
                 ),
               );
             },
@@ -64,12 +117,10 @@ class _UsuarioListPageState extends State<UsuarioListPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          // Navega para a página de criação e aguarda o retorno
           final sucesso = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const UsuarioCreatePage()),
           );
-
           if (sucesso == true) _atualizarLista();
         },
         child: const Icon(Icons.add),
