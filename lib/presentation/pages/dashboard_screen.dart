@@ -8,7 +8,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accentColor = Theme.of(context).primaryColor;
-    final cardColor = Theme.of(context).cardColor;
+    // final cardColor = Theme.of(context).cardColor;
 
     // Dados para o Dashboard (na V1 pegamos do mock)
     final todosQuartos = QuartoMockRepository().getTodosOsQuartos();

@@ -1,5 +1,3 @@
-import 'dart:developer' as console;
-
 import 'package:Hotelaria/domain/entities/usuario_entity.dart';
 import 'package:Hotelaria/presentation/pages/configuracoes_screen.dart';
 import 'package:Hotelaria/presentation/pages/financeiro_screen.dart';
@@ -29,14 +27,6 @@ class _HomeMenuScreenState extends State<HomeMenuScreen> {
 
   Future<void> _carregarDadosUsuario() async {
     final user = await AuthService.getUsuarioLogado();
-
-    if (user?.perfil?.funcionalidades != null) {
-      for (var f in user!.perfil!.funcionalidades!) {
-        print("Funcionalidade carregada: ${f.nome}");
-      }
-    } else {
-      print("ALERTA: Lista de funcionalidades está NULA ou VAZIA no objeto!");
-    }
 
     setState(() {
       _usuario = user;

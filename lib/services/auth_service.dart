@@ -18,7 +18,6 @@ class AuthService {
     if (response.statusCode == 200) {
       final loginData = LoginResponse.fromJson(jsonDecode(response.body));
 
-      // SALVAR: Armazena o usuário localmente após o login com sucesso
       await _salvarUsuarioLocal(loginData.user);
 
       return loginData;
