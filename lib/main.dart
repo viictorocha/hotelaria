@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:Hotelaria/presentation/pages/login_page.dart';
-import 'package:Hotelaria/presentation/pages/perfil_list_page.dart';
 import 'package:Hotelaria/service_locator.dart';
-import 'presentation/pages/home_menu_screen.dart';
+import 'presentation/pages/login/login_page.dart';
+import 'presentation/pages/perfil/perfil_list_page.dart';
+import 'presentation/pages/home/home_menu_screen.dart';
 
 void main() {
   setupLocator();

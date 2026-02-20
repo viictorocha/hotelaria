@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/quarto_entity.dart';
-import '../../data/repositories/quarto_mock_repository.dart';
+import '../../../domain/entities/quarto_entity.dart';
+import '../../../data/repositories/quarto_mock_repository.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});

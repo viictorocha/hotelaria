@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/quarto_entity.dart';
+import '../../../domain/entities/quarto_entity.dart';
 
 class QuartoDetalheScreen extends StatelessWidget {
   final QuartoEntity quarto;

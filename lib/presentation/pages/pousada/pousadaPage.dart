@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/pousada_entity.dart';
-import '../../services/pousada_service.dart';
+import '../../../domain/entities/pousada_entity.dart';
+import '../../../services/pousada_service.dart';
 
 class PousadaPage extends StatefulWidget {
   const PousadaPage({super.key});

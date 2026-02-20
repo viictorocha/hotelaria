@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/perfil_entity.dart';
-import '../../domain/entities/usuario_entity.dart';
-import '../../services/perfil_service.dart';
-import '../../services/usuario_service.dart';
+import '../../../domain/entities/perfil_entity.dart';
+import '../../../domain/entities/usuario_entity.dart';
+import '../../../services/perfil_service.dart';
+import '../../../services/usuario_service.dart';
 
 class UsuarioCreatePage extends StatefulWidget {
   const UsuarioCreatePage({super.key});

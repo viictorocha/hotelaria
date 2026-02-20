@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:Hotelaria/presentation/pages/quarto_detalhe_screen.dart';
-import '../../domain/entities/quarto_entity.dart';
-import '../../data/repositories/quarto_mock_repository.dart';
+import 'package:Hotelaria/presentation/pages/quarto/quarto_detalhe_screen.dart';
+import '../../../domain/entities/quarto_entity.dart';
+import '../../../data/repositories/quarto_mock_repository.dart';
 
 class MapaQuartosScreen extends StatefulWidget {
   const MapaQuartosScreen({super.key});

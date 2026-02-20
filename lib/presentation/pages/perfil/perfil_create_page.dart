@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:Hotelaria/domain/entities/funcionalidade_entity.dart';
-import '../../services/perfil_service.dart';
+import '../../../services/perfil_service.dart';
 
 class PerfilCreatePage extends StatefulWidget {
   const PerfilCreatePage({super.key});

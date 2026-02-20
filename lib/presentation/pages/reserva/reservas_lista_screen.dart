@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/reserva_entity.dart';
+import '../../../domain/entities/reserva_entity.dart';
 
 class ReservasListaScreen extends StatelessWidget {
   const ReservasListaScreen({super.key});

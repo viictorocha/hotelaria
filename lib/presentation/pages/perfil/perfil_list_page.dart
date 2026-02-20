@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:Hotelaria/presentation/pages/perfil_create_page.dart';
-import '../../domain/entities/perfil_entity.dart';
-import '../../services/perfil_service.dart';
+import 'package:Hotelaria/presentation/pages/perfil/perfil_create_page.dart';
+import '../../../domain/entities/perfil_entity.dart';
+import '../../../services/perfil_service.dart';
 import 'perfil_edit_page.dart';
 
 class PerfilListPage extends StatefulWidget {

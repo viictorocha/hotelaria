@@ -1,12 +1,12 @@
 import 'package:Hotelaria/domain/entities/usuario_entity.dart';
-import 'package:Hotelaria/presentation/pages/configuracoes_screen.dart';
-import 'package:Hotelaria/presentation/pages/financeiro_screen.dart';
+import 'package:Hotelaria/presentation/pages/configuracoes/configuracoes_screen.dart';
+import 'package:Hotelaria/presentation/pages/financeiro/financeiro_screen.dart';
 import 'package:Hotelaria/services/auth_service.dart';
 import 'package:flutter/material.dart';
-import 'package:Hotelaria/presentation/pages/consumo_screen.dart';
-import 'package:Hotelaria/presentation/pages/dashboard_screen.dart';
-import 'package:Hotelaria/presentation/pages/mapa_quartos_screen.dart';
-import 'package:Hotelaria/presentation/pages/reservas_lista_screen.dart';
+import 'package:Hotelaria/presentation/pages/consumo/consumo_screen.dart';
+import 'package:Hotelaria/presentation/pages/dashboard/dashboard_screen.dart';
+import 'package:Hotelaria/presentation/pages/quarto/mapa_quartos_screen.dart';
+import 'package:Hotelaria/presentation/pages/reserva/reservas_lista_screen.dart';
 
 class HomeMenuScreen extends StatefulWidget {
   const HomeMenuScreen({super.key});

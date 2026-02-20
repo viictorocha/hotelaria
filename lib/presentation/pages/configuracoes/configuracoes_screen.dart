@@ -1,7 +1,7 @@
-import 'package:Hotelaria/presentation/pages/pousadaPage.dart';
+import 'package:Hotelaria/presentation/pages/pousada/pousadaPage.dart';
 import 'package:Hotelaria/presentation/pages/UsuarioListPage.dart';
 import 'package:flutter/material.dart';
-import 'perfil_list_page.dart';
+import '../perfil/perfil_list_page.dart';
 
 class ConfiguracoesScreen extends StatelessWidget {
   const ConfiguracoesScreen({super.key});
