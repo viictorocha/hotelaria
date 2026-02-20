@@ -31,11 +31,12 @@ class UsuarioEntity {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'nome': nome,
-      'email': email,
-      'senha': senha,
-      'perfil': perfil?.toJson(),
+      "id": 0,
+      "nome": nome,
+      "email": email,
+      "senha": senha,
+      "perfilId": perfilId,
+      "perfil": perfil?.toJson(),
     };
   }
 }

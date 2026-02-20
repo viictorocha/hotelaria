@@ -1,3 +1,5 @@
+import 'dart:developer' as console;
+
 import 'package:Hotelaria/domain/entities/usuario_entity.dart';
 import 'package:Hotelaria/presentation/pages/configuracoes_screen.dart';
 import 'package:Hotelaria/presentation/pages/financeiro_screen.dart';
@@ -28,24 +30,36 @@ class _HomeMenuScreenState extends State<HomeMenuScreen> {
   Future<void> _carregarDadosUsuario() async {
     final user = await AuthService.getUsuarioLogado();
 
+    if (user?.perfil?.funcionalidades != null) {
+      for (var f in user!.perfil!.funcionalidades!) {
+        print("Funcionalidade carregada: ${f.nome}");
+      }
+    } else {
+      print("ALERTA: Lista de funcionalidades está NULA ou VAZIA no objeto!");
+    }
+
     setState(() {
-      _usuario =
-          user; // Agora sua tela tem os dados para o _temAcesso() funcionar!
+      _usuario = user;
       _isLoading = false;
     });
   }
 
-  /// Verifica se o usuário tem permissão para acessar a funcionalidade
   bool _temAcesso(String funcionalidade) {
     if (_usuario == null) return false;
-
-    // Admin (PerfilId 1) sempre tem acesso a tudo
     if (_usuario!.perfilId == 1) return true;
 
-    // Verifica na lista de funcionalidades do perfil
-    return _usuario!.perfil?.funcionalidades?.any(
-          (f) => f.nome.toLowerCase() == funcionalidade.toLowerCase(),
-        ) ??
+    final buscaNormalizada = funcionalidade
+        .toLowerCase()
+        .replaceAll('_', '')
+        .replaceAll(' ', '');
+
+    return _usuario!.perfil?.funcionalidades?.any((f) {
+          final nomeApiNormalizado = f.nome
+              .toLowerCase()
+              .replaceAll('_', '')
+              .replaceAll(' ', '');
+          return nomeApiNormalizado == buscaNormalizada;
+        }) ??
         false;
   }
 
@@ -139,17 +153,22 @@ class _HomeMenuScreenState extends State<HomeMenuScreen> {
                         ),
                       ),
                     ],
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: accentColor, width: 2),
+                    child: CircleAvatar(
+                      radius: 24,
+                      backgroundColor:
+                          Colors.grey[200], // Fundo neutro caso a imagem falhe
+                      backgroundImage: const NetworkImage(
+                        'https://i.pravatar.cc/150?img=12',
                       ),
-                      child: const CircleAvatar(
-                        radius: 24,
-                        backgroundImage: NetworkImage(
-                          'https://i.pravatar.cc/150?img=12',
-                        ),
+                      // ESSA É A CHAVE: Trata o erro de rede/CORS
+                      onBackgroundImageError: (exception, stackTrace) {
+                        debugPrint("Erro ao carregar avatar: $exception");
+                      },
+                      // O ícone abaixo só aparece se a imagem falhar ou estiver carregando
+                      child: const Icon(
+                        Icons.person,
+                        color: Colors.grey,
+                        size: 24,
                       ),
                     ),
                   ),
@@ -191,7 +210,7 @@ class _HomeMenuScreenState extends State<HomeMenuScreen> {
                         ),
                       ),
 
-                    if (_temAcesso('Mapa_Quartos'))
+                    if (_temAcesso('MapaQuartos'))
                       _buildMenuItem(
                         context,
                         icon: Icons.meeting_room_rounded,

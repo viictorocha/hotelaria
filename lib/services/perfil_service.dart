@@ -1,13 +1,11 @@
 import 'dart:convert';
+import 'package:Hotelaria/constants/api_constants.dart';
 import 'package:Hotelaria/domain/entities/funcionalidade_entity.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../domain/entities/perfil_entity.dart';
 
 class PerfilService {
-  // Altere para a URL da sua API na Render
-  final String baseUrl = "https://hotelariaapi.onrender.com";
-
   /// Recupera o Token JWT salvo no SharedPreferences
   Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -19,7 +17,7 @@ class PerfilService {
     try {
       final token = await _getToken();
       final response = await http.get(
-        Uri.parse('$baseUrl/perfis'),
+        Uri.parse(ApiConstants.perfis),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -44,7 +42,7 @@ class PerfilService {
     try {
       final token = await _getToken();
       final response = await http.get(
-        Uri.parse('$baseUrl/funcionalidades'),
+        Uri.parse(ApiConstants.funcionalidades),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -76,7 +74,7 @@ class PerfilService {
       final token = await _getToken();
 
       final response = await http.put(
-        Uri.parse('$baseUrl/perfis/$id'),
+        Uri.parse('${ApiConstants.perfis}/$id'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -99,7 +97,7 @@ class PerfilService {
     try {
       final token = await _getToken();
       final response = await http.post(
-        Uri.parse('$baseUrl/perfis'),
+        Uri.parse(ApiConstants.perfis),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

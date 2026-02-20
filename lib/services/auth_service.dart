@@ -1,16 +1,16 @@
 import 'dart:convert';
+import 'package:Hotelaria/constants/api_constants.dart';
 import 'package:Hotelaria/domain/entities/login_response.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../domain/entities/usuario_entity.dart'; // Ajuste o path se necessário
 
 class AuthService {
-  final String baseUrl = "https://hotelariaapi.onrender.com";
   static const String _userKey = "user_data";
 
   Future<LoginResponse?> login(String email, String password) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/auth/login'),
+      Uri.parse('${ApiConstants.baseUrl}/auth/login'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'Email': email, 'Senha': password}),
     );

@@ -1,11 +1,11 @@
 import 'dart:convert';
+import 'dart:developer' as console;
+import 'package:Hotelaria/constants/api_constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../domain/entities/usuario_entity.dart';
 
 class UsuarioService {
-  final String baseUrl = "https://hotelariaapi.onrender.com";
-
   Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('jwt_token');
@@ -14,7 +14,7 @@ class UsuarioService {
   Future<List<UsuarioEntity>> getUsuarios() async {
     final token = await _getToken();
     final response = await http.get(
-      Uri.parse('$baseUrl/usuarios'),
+      Uri.parse(ApiConstants.usuarios),
       headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -26,22 +26,27 @@ class UsuarioService {
   }
 
   Future<bool> criarUsuario(UsuarioEntity usuario) async {
-    final token = await _getToken();
-    final response = await http.post(
-      Uri.parse('$baseUrl/usuarios'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(usuario.toJson()),
-    );
-    return response.statusCode == 201;
+    try {
+      final token = await _getToken();
+      final response = await http.post(
+        Uri.parse(ApiConstants.usuarios),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(usuario.toJson()),
+      );
+      console.log('Criando usuário: ${usuario.toJson()}');
+      return response.statusCode == 201;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<bool> atualizarUsuario(UsuarioEntity usuario) async {
     final token = await _getToken();
     final response = await http.put(
-      Uri.parse('$baseUrl/usuarios/${usuario.id}'),
+      Uri.parse('${ApiConstants.usuarios}/${usuario.id}'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -55,7 +60,7 @@ class UsuarioService {
     final token = await _getToken();
     try {
       final response = await http.delete(
-        Uri.parse('$baseUrl/usuarios/$id'),
+        Uri.parse('${ApiConstants.usuarios}/$id'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
