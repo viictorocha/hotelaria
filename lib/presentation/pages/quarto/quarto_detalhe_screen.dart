@@ -1,3 +1,4 @@
+import 'package:Hotelaria/presentation/pages/quarto/QuartoFormScreen.dart';
 import 'package:flutter/material.dart';
 import '../../../domain/entities/quarto_entity.dart';
 
@@ -36,10 +37,25 @@ class QuartoDetalheScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
+        // No actions do AppBar da sua QuartoDetalheScreen:
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_outlined, color: Colors.white70),
-            onPressed: () {}, // Editar quarto
+            onPressed: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => QuartoFormScreen(
+                    quarto: quarto,
+                  ), // Passando o objeto atual
+                ),
+              );
+              if (result == true) {
+                Navigator.pop(
+                  context,
+                ); // Fecha o detalhe para atualizar a lista principal
+              }
+            },
           ),
         ],
       ),

@@ -1,6 +1,11 @@
+import 'dart:convert';
+
+import 'package:Hotelaria/constants/api_constants.dart';
+import 'package:Hotelaria/services/quarto_service.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../domain/entities/quarto_entity.dart';
-import '../../../data/repositories/quarto_mock_repository.dart';
 
 class ConsumoScreen extends StatefulWidget {
   const ConsumoScreen({super.key});
@@ -10,13 +15,10 @@ class ConsumoScreen extends StatefulWidget {
 }
 
 class _ConsumoScreenState extends State<ConsumoScreen> {
-  // Pegamos apenas quartos ocupados para lançar consumo
-  final List<QuartoEntity> quartosOcupados = QuartoMockRepository()
-      .getTodosOsQuartos()
-      .where((q) => q.status == StatusQuarto.ocupado)
-      .toList();
-
-  String? quartoSelecionadoId;
+  final QuartoService _quartoService = QuartoService();
+  List<QuartoEntity> _quartosOcupados = []; // Agora buscamos da API
+  bool _isLoading = true;
+  int? quartoSelecionadoId;
 
   // Itens de consumo mocados para a V1
   final List<Map<String, dynamic>> itensMenu = [
@@ -57,6 +59,53 @@ class _ConsumoScreenState extends State<ConsumoScreen> {
       'cor': Colors.brown,
     },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarQuartosOcupados();
+  }
+
+  Future<void> _carregarQuartosOcupados() async {
+    final todos = await _quartoService.getQuartos();
+    setState(() {
+      _quartosOcupados = todos
+          .where((q) => q.status == StatusQuarto.ocupado)
+          .toList();
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _lancarConsumoNoBanco(Map<String, dynamic> item) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token');
+
+    final response = await http.post(
+      Uri.parse("${ApiConstants.baseUrl}/consumo"),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'quartoId': quartoSelecionadoId,
+        'descricao': item['nome'],
+        'valor': item['preco'],
+        'quantidade': 1,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "${item['nome']} lançado no Quarto $quartoSelecionadoId!",
+            ),
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +170,7 @@ class _ConsumoScreenState extends State<ConsumoScreen> {
   }
 
   Widget _buildSelecaoQuartos(Color accentColor) {
-    if (quartosOcupados.isEmpty) {
+    if (_quartosOcupados.isEmpty) {
       return const Padding(
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: Text(
@@ -135,9 +184,9 @@ class _ConsumoScreenState extends State<ConsumoScreen> {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 24),
-        itemCount: quartosOcupados.length,
+        itemCount: _quartosOcupados.length,
         itemBuilder: (context, index) {
-          final q = quartosOcupados[index];
+          final q = _quartosOcupados[index];
           final isSelected = quartoSelecionadoId == q.id;
           return GestureDetector(
             onTap: () => setState(() => quartoSelecionadoId = q.id),
@@ -207,6 +256,10 @@ class _ConsumoScreenState extends State<ConsumoScreen> {
   }
 
   void _confirmarLancamento(Map<String, dynamic> item) {
+    final quarto = _quartosOcupados.firstWhere(
+      (q) => q.id == quartoSelecionadoId,
+    );
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Theme.of(context).cardColor,
@@ -218,38 +271,17 @@ class _ConsumoScreenState extends State<ConsumoScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Confirmar Lançamento?',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
             Text(
-              '${item['nome']} para o Quarto $quartoSelecionadoId',
+              '${item['nome']} para o Quarto ${quarto.numero}',
               style: const TextStyle(color: Colors.white70),
             ),
             const SizedBox(height: 32),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
-                minimumSize: const Size(double.infinity, 50),
-              ),
               onPressed: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Lançado com sucesso!")),
-                );
+                _lancarConsumoNoBanco(item);
               },
-              child: const Text(
-                'CONFIRMAR',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: const Text('CONFIRMAR'),
             ),
           ],
         ),

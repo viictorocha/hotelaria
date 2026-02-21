@@ -1,5 +1,5 @@
 import 'package:Hotelaria/domain/entities/usuario_entity.dart';
-import 'package:Hotelaria/presentation/pages/UsuarioEditPage.dart';
+import 'package:Hotelaria/presentation/pages/usuario/UsuarioEditPage.dart';
 import 'package:Hotelaria/presentation/pages/usuario/usuario_create_page.dart';
 import 'package:Hotelaria/services/usuario_service.dart';
 import 'package:flutter/material.dart';

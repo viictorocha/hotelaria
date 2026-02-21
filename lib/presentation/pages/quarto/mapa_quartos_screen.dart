@@ -1,7 +1,7 @@
+import 'package:Hotelaria/services/quarto_service.dart';
 import 'package:flutter/material.dart';
 import 'package:Hotelaria/presentation/pages/quarto/quarto_detalhe_screen.dart';
 import '../../../domain/entities/quarto_entity.dart';
-import '../../../data/repositories/quarto_mock_repository.dart';
 
 class MapaQuartosScreen extends StatefulWidget {
   const MapaQuartosScreen({super.key});
@@ -11,17 +11,27 @@ class MapaQuartosScreen extends StatefulWidget {
 }
 
 class _MapaQuartosScreenState extends State<MapaQuartosScreen> {
-  // 1. Pegamos a lista original do mock
-  final List<QuartoEntity> todosOsQuartos = QuartoMockRepository()
-      .getTodosOsQuartos();
-
-  // 2. Variável para controlar o filtro (null significa "Todos")
+  List<QuartoEntity> _todosOsQuartos = [];
+  bool isLoading = true;
   StatusQuarto? statusSelecionado;
 
-  // 3. Lógica que filtra a lista em tempo real para o GridView
   List<QuartoEntity> get quartosFiltrados {
-    if (statusSelecionado == null) return todosOsQuartos;
-    return todosOsQuartos.where((q) => q.status == statusSelecionado).toList();
+    if (statusSelecionado == null) return _todosOsQuartos;
+    return _todosOsQuartos.where((q) => q.status == statusSelecionado).toList();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshQuartos();
+  }
+
+  Future<void> _refreshQuartos() async {
+    final quartos = await QuartoService().getQuartos();
+    setState(() {
+      _todosOsQuartos = quartos;
+      isLoading = false;
+    });
   }
 
   @override

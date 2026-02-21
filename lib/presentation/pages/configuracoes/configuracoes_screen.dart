@@ -1,5 +1,6 @@
+import 'package:Hotelaria/presentation/pages/quarto/QuartoFormScreen.dart';
+import 'package:Hotelaria/presentation/pages/usuario/UsuarioListPage.dart';
 import 'package:Hotelaria/presentation/pages/pousada/pousadaPage.dart';
-import 'package:Hotelaria/presentation/pages/UsuarioListPage.dart';
 import 'package:flutter/material.dart';
 import '../perfil/perfil_list_page.dart';
 
@@ -36,7 +37,14 @@ class ConfiguracoesScreen extends StatelessWidget {
               Icons.bed_outlined,
               'Gerenciar Quartos',
               'Adicionar ou remover unidades',
-              () {}, // Por enquanto vazio
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const QuartoFormScreen(),
+                  ),
+                );
+              },
             ),
           ]),
           const SizedBox(height: 32),

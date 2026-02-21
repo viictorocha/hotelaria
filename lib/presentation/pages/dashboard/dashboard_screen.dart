@@ -1,133 +1,173 @@
 import 'package:flutter/material.dart';
+import 'package:Hotelaria/services/quarto_service.dart';
 import '../../../domain/entities/quarto_entity.dart';
-import '../../../data/repositories/quarto_mock_repository.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  final QuartoService _quartoService = QuartoService();
+
+  // Variáveis de estado
+  bool _isLoading = true;
+  int _totalOcupados = 0;
+  int _totalQuartos = 0;
+  int _emLimpeza = 0;
+  double _faturamento = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _atualizarDados();
+  }
+
+  Future<void> _atualizarDados() async {
+    setState(() => _isLoading = true);
+
+    // 1. Busca quartos para calcular ocupação e limpeza
+    final quartos = await _quartoService.getQuartos();
+
+    // 2. Simulando busca de faturamento (ou chame seu novo endpoint)
+    // final stats = await _financeiroService.getStatsHoje();
+
+    if (mounted) {
+      setState(() {
+        _totalQuartos = quartos.length;
+        _totalOcupados = quartos
+            .where((q) => q.status == StatusQuarto.ocupado)
+            .length;
+        _emLimpeza = quartos
+            .where((q) => q.status == StatusQuarto.limpeza)
+            .length;
+        _faturamento = 1250.00; // Mock por enquanto ou stats['total']
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final accentColor = Theme.of(context).primaryColor;
-    // final cardColor = Theme.of(context).cardColor;
-
-    // Dados para o Dashboard (na V1 pegamos do mock)
-    final todosQuartos = QuartoMockRepository().getTodosOsQuartos();
-    final ocupados = todosQuartos
-        .where((q) => q.status == StatusQuarto.ocupado)
-        .length;
-    final taxaOcupacao = (ocupados / todosQuartos.length) * 100;
+    final taxaOcupacao = _totalQuartos > 0
+        ? (_totalOcupados / _totalQuartos) * 100
+        : 0;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         title: const Text(
           'Dashboard',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _atualizarDados,
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // --- Seção de Resumo Financeiro ---
-            const Text(
-              'Desempenho Hoje',
-              style: TextStyle(color: Colors.white70, fontSize: 14),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'R\$ 1.250,00',
-              style: TextStyle(
-                color: accentColor,
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: _atualizarDados,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Desempenho Hoje',
+                      style: TextStyle(color: Colors.white70, fontSize: 14),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'R\$ ${_faturamento.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        color: accentColor,
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Grid de Métricas Dinâmicas
+                    Row(
+                      children: [
+                        _buildStatCard(
+                          context,
+                          'Ocupação',
+                          '${taxaOcupacao.toStringAsFixed(0)}%',
+                          Icons.analytics_outlined,
+                          accentColor,
+                        ),
+                        const SizedBox(width: 16),
+                        _buildStatCard(
+                          context,
+                          'Check-ins',
+                          '4',
+                          Icons.login_rounded,
+                          const Color(0xFF10B981),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        _buildStatCard(
+                          context,
+                          'Check-outs',
+                          '2',
+                          Icons.logout_rounded,
+                          const Color(0xFFF59E0B),
+                        ),
+                        const SizedBox(width: 16),
+                        _buildStatCard(
+                          context,
+                          'Limpeza',
+                          '$_emLimpeza',
+                          Icons.cleaning_services_rounded,
+                          const Color(0xFF8B5CF6),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 32),
+                    const Text(
+                      'Últimas Atividades',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Aqui você pode mapear uma lista de notificações vinda da API
+                    _buildActivityItem(
+                      context,
+                      'Reserva Confirmada',
+                      'Quarto 101 • Ricardo Silva',
+                      '10 min atrás',
+                      Icons.event_available_rounded,
+                      const Color(0xFF10B981),
+                    ),
+                    _buildActivityItem(
+                      context,
+                      'Consumo Lançado',
+                      'Quarto 105 • 2x Cerveja Lata',
+                      '45 min atrás',
+                      Icons.shopping_cart_outlined,
+                      accentColor,
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 24),
-
-            // --- Grid de Métricas Rápidas ---
-            Row(
-              children: [
-                _buildStatCard(
-                  context,
-                  'Ocupação',
-                  '${taxaOcupacao.toStringAsFixed(0)}%',
-                  Icons.analytics_outlined,
-                  accentColor,
-                ),
-                const SizedBox(width: 16),
-                _buildStatCard(
-                  context,
-                  'Check-ins',
-                  '4',
-                  Icons.login_rounded,
-                  const Color(0xFF10B981),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                _buildStatCard(
-                  context,
-                  'Check-outs',
-                  '2',
-                  Icons.logout_rounded,
-                  const Color(0xFFF59E0B),
-                ),
-                const SizedBox(width: 16),
-                _buildStatCard(
-                  context,
-                  'Limpeza',
-                  '3',
-                  Icons.cleaning_services_rounded,
-                  const Color(0xFF8B5CF6),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 32),
-
-            // --- Lista de Atividade Recente ---
-            const Text(
-              'Últimas Atividades',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildActivityItem(
-              context,
-              'Reserva Confirmada',
-              'Quarto 101 • Ricardo Silva',
-              '10 min atrás',
-              Icons.event_available_rounded,
-              const Color(0xFF10B981),
-            ),
-            _buildActivityItem(
-              context,
-              'Consumo Lançado',
-              'Quarto 105 • 2x Cerveja Lata',
-              '45 min atrás',
-              Icons.shopping_cart_outlined,
-              accentColor,
-            ),
-            _buildActivityItem(
-              context,
-              'Manutenção Necessária',
-              'Quarto 202 • Ar condicionado',
-              '2h atrás',
-              Icons.build_circle_outlined,
-              const Color(0xFFEF4444),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
